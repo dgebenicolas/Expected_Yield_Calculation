@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import plotly.graph_objects as go
-from scipy.stats import gaussian_kde
 from long_term_utils import (
     setup_preprocessor, check_csv_format, process_data, 
     map_agrofon_to_group, REQUIRED_COLUMNS, COLUMN_DTYPES, rename_product_groups
@@ -35,7 +34,7 @@ def main():
             st.error(result)
             return
         
-    df = result.copy()  # result is the DataFrame if validation passed
+    df = result  # result is the DataFrame if validation passed
     id_columns, no_outlier_df = process_data(df)
     # Load the aggregated climate data
     try:
