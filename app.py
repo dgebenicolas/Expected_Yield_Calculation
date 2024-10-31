@@ -75,6 +75,7 @@ def main():
             pre_process_df = rename_product_groups(pre_process_df)
             processed_data = preprocessor.transform(pre_process_df)
             processed_df = pd.DataFrame(processed_data, columns=feature_names)
+            print(processed_df.columns)
             y_pred = model.predict(processed_df)
             y_pred_list.append(y_pred)
         
