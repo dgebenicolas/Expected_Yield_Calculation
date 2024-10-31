@@ -71,7 +71,7 @@ def main():
         y_pred_list = []
         
         for df in dfs:
-            pre_process_df = map_agrofon_to_group(pre_process_df)
+            pre_process_df = map_agrofon_to_group(df)
             pre_process_df = rename_product_groups(pre_process_df)
             processed_data = preprocessor.transform(pre_process_df)
             processed_df = pd.DataFrame(processed_data, columns=feature_names)
