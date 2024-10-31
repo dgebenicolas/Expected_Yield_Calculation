@@ -4,7 +4,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 REQUIRED_COLUMNS = [
-    'Подразделение', 'Поле', 'Field_ID', 'Year', 'Area', 'Yield', 'Агрофон',
+    'Подразделение', 'Поле', 'Field_ID', 'Year', 'Area', 'Агрофон',
     'Культура', 'Previous_Years_Yield', 'Previous_Year_Mean_Region',
     'Total Fertilizer/ha', 'Macro Total/ha', 'Micro Total/ha',
     'Fung Total/ha', 'Pest Total/ha', 'bdod', 'cec', 'clay', 'phh2o',
@@ -14,7 +14,7 @@ REQUIRED_COLUMNS = [
 
 COLUMN_DTYPES = {
     'Year': 'int64', 
-    'Area': 'float64', 'Yield': 'float64', 
+    'Area': 'float64', 
     'Агрофон': 'object', 'Культура': 'object', 'Previous_Years_Yield': 'float64', 
     'Previous_Year_Mean_Region': 'float64', 'Total Fertilizer/ha': 'float64', 
     'Macro Total/ha': 'float64', 'Micro Total/ha': 'float64', 'Fung Total/ha': 'float64', 
