@@ -97,7 +97,7 @@ def main():
             'Scenario Good': 'mean', 
             'Scenario Moderate Good': 'mean',
             'Scenario Moderate Bad': 'mean',
-            'Expectedd Yield': 'mean'
+            'Expected Yield': 'mean'
         }).reset_index()
         st.dataframe(farm_results)
 
