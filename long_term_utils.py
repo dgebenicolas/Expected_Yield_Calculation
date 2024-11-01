@@ -36,8 +36,6 @@ COLUMN_DTYPES_2 = {
 }
 
 
-
-required_cols = REQUIRED_COLUMNS.copy()
 def setup_preprocessor(pre_process_df):
     numeric_features = list(pre_process_df.drop(['Агрофон', 'Культура'], axis=1).select_dtypes(include=['int64', 'float64']).columns)
     categorical_features = ['Агрофон', 'Культура']
@@ -59,16 +57,6 @@ def check_csv_format(file):
         df = pd.read_csv(file)
     except Exception as e:
         return False, f"Error reading CSV file: {str(e)}"
-    required_cols = REQUIRED_COLUMNS.copy()
-    
-    # Add Yield to required columns if it exists in the dataframe
-    missing_cols = [col for col in required_cols if col not in df.columns]
-    extra_cols = [col for col in df.columns if col not in required_cols]
-    
-    if missing_cols:
-        return False, f"Missing columns: {', '.join(missing_cols)}"
-    elif extra_cols:
-        return False, f"Extra columns: {', '.join(extra_cols)}"
     
     return True, df
 
