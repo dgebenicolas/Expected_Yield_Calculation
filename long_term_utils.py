@@ -246,142 +246,142 @@ def map_crop_name(df):
 
 
     def predict_yields(df, model_type, prep_path):
-    """
-    Main prediction function that handles data processing and yield predictions
-    Args:
-        df (pd.DataFrame): Input DataFrame with required features
-        model_type (str): Either 'wheat' or 'other_crops'
-    Returns:
-        tuple: (result_df, error_message)
-    """
-    try:
-        # Process input data
-        id_columns, no_outlier_df = process_data_wheat(df)
-        
-        # Load climate data
-        aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
-        climate_columns = [col for col in aggregated_df.columns if col != 'climate_quantile']
-        
-        # Load and prep model
-        model = load_model(model_type)
-        if model is None:
-            return None, "Failed to load model"
+        """
+        Main prediction function that handles data processing and yield predictions
+        Args:
+            df (pd.DataFrame): Input DataFrame with required features
+            model_type (str): Either 'wheat' or 'other_crops'
+        Returns:
+            tuple: (result_df, error_message)
+        """
+        try:
+            # Process input data
+            id_columns, no_outlier_df = process_data_wheat(df)
             
-        # Process climate scenarios
-        dfs = []
-        for _, climate_row in aggregated_df.iterrows():
-            temp_df = no_outlier_df.copy()
-            temp_df[climate_columns] = climate_row[climate_columns].values
-            dfs.append(temp_df)
-        
-        # Load and setup preprocessor
-        prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
-        prep_df = map_agrofon_to_group(prep_df)
-        prep_df = rename_product_groups(prep_df)
-        preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
-        feature_names = (numeric_features + 
-                        preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
-        
-        # Generate predictions
-        y_pred_list = []
-        for df in dfs:
-            pre_process_df = map_agrofon_to_group(df)
-            pre_process_df = rename_product_groups(pre_process_df)
-            processed_data = preprocessor.transform(pre_process_df)
-            processed_df = pd.DataFrame(processed_data, columns=feature_names)
-            processed_df = processed_df.drop(columns='Культура_others')
-            y_pred = model.predict(processed_df)
-            y_pred_list.append(y_pred)
-        
-        # Create results DataFrame
-        predictions_df = pd.DataFrame({
-            'Scenario Bad': y_pred_list[0],
-            'Scenario Good': y_pred_list[1],
-            'Scenario Moderate Good': y_pred_list[3],
-            'Scenario Moderate Bad': y_pred_list[2]
-        })
-        
-        # Calculate expected yield
-        predictions_df['Expected Yield'] = (
-            predictions_df['Scenario Bad'] * 0.2 +
-            predictions_df['Scenario Good'] * 0.2 +
-            predictions_df['Scenario Moderate Good'] * 0.3 +
-            predictions_df['Scenario Moderate Bad'] * 0.3
-        )
-        
-        # Combine results
-        result_df = pd.concat([id_columns, predictions_df], axis=1)
-        return result_df, None
-        
-    except Exception as e:
-        return None, f"Error in prediction pipeline: {str(e)}"
+            # Load climate data
+            aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
+            climate_columns = [col for col in aggregated_df.columns if col != 'climate_quantile']
+            
+            # Load and prep model
+            model = load_model(model_type)
+            if model is None:
+                return None, "Failed to load model"
+                
+            # Process climate scenarios
+            dfs = []
+            for _, climate_row in aggregated_df.iterrows():
+                temp_df = no_outlier_df.copy()
+                temp_df[climate_columns] = climate_row[climate_columns].values
+                dfs.append(temp_df)
+            
+            # Load and setup preprocessor
+            prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
+            prep_df = map_agrofon_to_group(prep_df)
+            prep_df = rename_product_groups(prep_df)
+            preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
+            feature_names = (numeric_features + 
+                            preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
+            
+            # Generate predictions
+            y_pred_list = []
+            for df in dfs:
+                pre_process_df = map_agrofon_to_group(df)
+                pre_process_df = rename_product_groups(pre_process_df)
+                processed_data = preprocessor.transform(pre_process_df)
+                processed_df = pd.DataFrame(processed_data, columns=feature_names)
+                processed_df = processed_df.drop(columns='Культура_others')
+                y_pred = model.predict(processed_df)
+                y_pred_list.append(y_pred)
+            
+            # Create results DataFrame
+            predictions_df = pd.DataFrame({
+                'Scenario Bad': y_pred_list[0],
+                'Scenario Good': y_pred_list[1],
+                'Scenario Moderate Good': y_pred_list[3],
+                'Scenario Moderate Bad': y_pred_list[2]
+            })
+            
+            # Calculate expected yield
+            predictions_df['Expected Yield'] = (
+                predictions_df['Scenario Bad'] * 0.2 +
+                predictions_df['Scenario Good'] * 0.2 +
+                predictions_df['Scenario Moderate Good'] * 0.3 +
+                predictions_df['Scenario Moderate Bad'] * 0.3
+            )
+            
+            # Combine results
+            result_df = pd.concat([id_columns, predictions_df], axis=1)
+            return result_df, None
+            
+        except Exception as e:
+            return None, f"Error in prediction pipeline: {str(e)}"
 
     def predict_yields_others(df, model_type, prep_path):
-    """
-    Main prediction function that handles data processing and yield predictions
-    Args:
-        df (pd.DataFrame): Input DataFrame with required features
-        model_type (str): Either 'wheat' or 'other_crops'
-    Returns:
-        tuple: (result_df, error_message)
-    """
-    try:
-        # Process input data
-        id_columns, no_outlier_df = process_data_others(df)
-        
-        # Load climate data
-        aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
-        climate_columns = [col for col in aggregated_df.columns if col != 'climate_quantile']
-        
-        # Load and prep model
-        model = load_model(model_type)
-        if model is None:
-            return None, "Failed to load model"
+        """
+        Main prediction function that handles data processing and yield predictions
+        Args:
+            df (pd.DataFrame): Input DataFrame with required features
+            model_type (str): Either 'wheat' or 'other_crops'
+        Returns:
+            tuple: (result_df, error_message)
+        """
+        try:
+            # Process input data
+            id_columns, no_outlier_df = process_data_others(df)
             
-        # Process climate scenarios
-        dfs = []
-        for _, climate_row in aggregated_df.iterrows():
-            temp_df = no_outlier_df.copy()
-            temp_df[climate_columns] = climate_row[climate_columns].values
-            dfs.append(temp_df)
-        
-        # Load and setup preprocessor
-        prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
-        prep_df = map_agrofon_to_group(prep_df)
-        prep_df = rename_product_groups(prep_df)
-        preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
-        feature_names = (numeric_features + 
-                        preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
-        
-        # Generate predictions
-        y_pred_list = []
-        for df in dfs:
-            pre_process_df = map_agrofon_to_group(df)
-            pre_process_df = map_crop_name(pre_process_df)
-            processed_data = preprocessor.transform(pre_process_df)
-            processed_df = pd.DataFrame(processed_data, columns=feature_names)
-            y_pred = model.predict(processed_df)
-            y_pred_list.append(y_pred)
-        
-        # Create results DataFrame
-        predictions_df = pd.DataFrame({
-            'Scenario Bad': y_pred_list[0],
-            'Scenario Good': y_pred_list[1],
-            'Scenario Moderate Good': y_pred_list[3],
-            'Scenario Moderate Bad': y_pred_list[2]
-        })
-        
-        # Calculate expected yield
-        predictions_df['Expected Yield'] = (
-            predictions_df['Scenario Bad'] * 0.2 +
-            predictions_df['Scenario Good'] * 0.2 +
-            predictions_df['Scenario Moderate Good'] * 0.3 +
-            predictions_df['Scenario Moderate Bad'] * 0.3
-        )
-        
-        # Combine results
-        result_df = pd.concat([id_columns, predictions_df], axis=1)
-        return result_df, None
-        
-    except Exception as e:
-        return None, f"Error in prediction pipeline: {str(e)}"
+            # Load climate data
+            aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
+            climate_columns = [col for col in aggregated_df.columns if col != 'climate_quantile']
+            
+            # Load and prep model
+            model = load_model(model_type)
+            if model is None:
+                return None, "Failed to load model"
+                
+            # Process climate scenarios
+            dfs = []
+            for _, climate_row in aggregated_df.iterrows():
+                temp_df = no_outlier_df.copy()
+                temp_df[climate_columns] = climate_row[climate_columns].values
+                dfs.append(temp_df)
+            
+            # Load and setup preprocessor
+            prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
+            prep_df = map_agrofon_to_group(prep_df)
+            prep_df = rename_product_groups(prep_df)
+            preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
+            feature_names = (numeric_features + 
+                            preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
+            
+            # Generate predictions
+            y_pred_list = []
+            for df in dfs:
+                pre_process_df = map_agrofon_to_group(df)
+                pre_process_df = map_crop_name(pre_process_df)
+                processed_data = preprocessor.transform(pre_process_df)
+                processed_df = pd.DataFrame(processed_data, columns=feature_names)
+                y_pred = model.predict(processed_df)
+                y_pred_list.append(y_pred)
+            
+            # Create results DataFrame
+            predictions_df = pd.DataFrame({
+                'Scenario Bad': y_pred_list[0],
+                'Scenario Good': y_pred_list[1],
+                'Scenario Moderate Good': y_pred_list[3],
+                'Scenario Moderate Bad': y_pred_list[2]
+            })
+            
+            # Calculate expected yield
+            predictions_df['Expected Yield'] = (
+                predictions_df['Scenario Bad'] * 0.2 +
+                predictions_df['Scenario Good'] * 0.2 +
+                predictions_df['Scenario Moderate Good'] * 0.3 +
+                predictions_df['Scenario Moderate Bad'] * 0.3
+            )
+            
+            # Combine results
+            result_df = pd.concat([id_columns, predictions_df], axis=1)
+            return result_df, None
+            
+        except Exception as e:
+            return None, f"Error in prediction pipeline: {str(e)}"
