@@ -281,7 +281,7 @@ def predict_yields_others(df, model, prep_path):
         # Load and setup preprocessor
         prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
         prep_df = map_agrofon_to_group(prep_df)
-        prep_df = rename_product_groups(prep_df)
+        prep_df = map_crop_name(prep_df)
         preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
         feature_names = (numeric_features + 
                         preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
