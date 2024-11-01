@@ -11,7 +11,7 @@ from long_term_utils import (
     setup_preprocessor, check_csv_format, process_data_wheat, 
     map_agrofon_to_group, REQUIRED_COLUMNS, COLUMN_DTYPES, REQUIRED_COLUMNS_2, COLUMN_DTYPES_2, rename_product_groups,
     process_data_other, map_crop_name, predict_yields, predict_yields_others
-    
+
 )
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -66,15 +66,19 @@ def main():
         if not is_valid:
             st.error(result)
             return
+                # Load and prep model
+        model = load_model(model_type)
+        if model is None:
+            return None, "Failed to load model"
         
         # Get prep path based on model type
         prep_path = get_prep_path(model_type)
         
         # Choose correct prediction function based on model type
         if model_type == 'wheat':
-            result_df, error = predict_yields(result, model_type, prep_path)
+            result_df, error = predict_yields(result, model, prep_path)
         else:
-            result_df, error = predict_yields_others(result, model_type, prep_path)
+            result_df, error = predict_yields_others(result, model, prep_path)
             
         if error:
             st.error(error)
