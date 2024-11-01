@@ -8,23 +8,55 @@ import seaborn as sns
 import os
 import plotly.graph_objects as go
 from long_term_utils import (
-    setup_preprocessor, check_csv_format, process_data, 
-    map_agrofon_to_group, REQUIRED_COLUMNS, COLUMN_DTYPES, rename_product_groups
+    setup_preprocessor, check_csv_format, process_data_wheat, 
+    map_agrofon_to_group, REQUIRED_COLUMNS, COLUMN_DTYPES, REQUIRED_COLUMNS_2, COLUMN_DTYPES_2, rename_product_groups,
+    process_data_other, map_crop_name, predict_yields, predict_yields_others
 )
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-def load_model():
+def load_model(model_type):
+    """
+    Load model based on user selection
+    Args:
+        model_type (str): Either 'wheat' or 'other_crops'
+    Returns:
+        object: Loaded model or None if error
+    """
+    model_paths = {
+        'wheat': 'long_term_lgbm.txt',
+        'other_crops': 'other_crops_lgbm.txt'
+    }
+    
     try:
-        model = lgb.Booster(model_file=os.path.join(current_dir, 'long_term_lgbm.txt'))
+        model_path = os.path.join(current_dir, model_paths[model_type])
+        model = lgb.Booster(model_file=model_path)
         return model
     except Exception as e:
-        st.error(f"Error loading model: {str(e)}")
+        st.error(f"Error loading {model_type} model: {str(e)}")
         return None
+
+def get_prep_path(model_type):
+    """
+    Get preprocessing data path based on model type
+    """
+    prep_paths = {
+        'wheat': 'long_term_test.csv',
+        'other_crops': 'other_crop_set_up.csv'
+    }
+    return prep_paths[model_type]
 
 def main():
     st.title('Crop Yield Prediction')
     
-    # File uploader for no_outlier_df
+    # Add model selection dropdown
+    model_type = st.selectbox(
+        "Select crop type for prediction",
+        options=['wheat', 'other_crops'],
+        index=0,
+        help="Choose 'wheat' for wheat predictions or 'other_crops' for other crop types"
+    )
+    
+    # File uploader for input data
     uploaded_file = st.file_uploader("Upload your CSV file", type=['csv'])
     
     if uploaded_file is not None:
@@ -34,70 +66,20 @@ def main():
             st.error(result)
             return
         
-        df = result  # result is the DataFrame if validation passed
-        id_columns, no_outlier_df = process_data(df)
-        # Load the aggregated climate data
-        try:
-            aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
-        except Exception as e:
-            st.error(f"Error loading aggregated climate data: {str(e)}")
+        # Get prep path based on model type
+        prep_path = get_prep_path(model_type)
+        
+        # Choose correct prediction function based on model type
+        if model_type == 'wheat':
+            result_df, error = predict_yields(result, model_type, prep_path)
+        else:
+            result_df, error = predict_yields_others(result, model_type, prep_path)
+            
+        if error:
+            st.error(error)
             return
-        
-        # Load the pre-trained LightGBM model
-        model = load_model()
-        if model is None:
-            return
-
-        # Get climate feature columns
-        climate_columns = [col for col in aggregated_df.columns if col != 'climate_quantile']
-        
-        # Process each climate scenario and save separately
-        dfs = []
-        for idx, climate_row in aggregated_df.iterrows():
-            temp_df = no_outlier_df[no_outlier_df['Year'] == 2024].copy()
-            temp_df[climate_columns] = climate_row[climate_columns].values
-            dfs.append(temp_df)
-        
-        # Preprocess the data
-        prep_df = pd.read_csv(os.path.join(current_dir, 'prep_data.csv'))
-        prep_df = map_agrofon_to_group(prep_df)
-        prep_df = rename_product_groups(prep_df)
-        preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
-        processed_data = preprocessor.transform(prep_df)
-        feature_names = (numeric_features + 
-                        preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
-        
-        # Make predictions
-        y_pred_list = []
-        
-        for df in dfs:
-            pre_process_df = map_agrofon_to_group(df)
-            pre_process_df = rename_product_groups(pre_process_df)
-            processed_data = preprocessor.transform(pre_process_df)
-            processed_df = pd.DataFrame(processed_data, columns=feature_names)
-            processed_df = processed_df.drop(columns='Культура_others')
-            y_pred = model.predict(processed_df)
-            y_pred_list.append(y_pred)
-        
-        # Create a dataframe with the predictions
-        predictions_df = pd.DataFrame({
-            'Scenario Bad': y_pred_list[0],
-            'Scenario Good': y_pred_list[1],
-            'Scenario Moderate Good': y_pred_list[3],
-            'Scenario Moderate Bad': y_pred_list[2]
-        })
-        
-        # Calculate the expected yield
-        predictions_df['Expected Yield'] = (
-            predictions_df['Scenario Bad'] * 0.2 +
-            predictions_df['Scenario Good'] * 0.2 +
-            predictions_df['Scenario Moderate Good'] * 0.3 +
-            predictions_df['Scenario Moderate Bad'] * 0.3
-        )
-        
         # Display the results
         st.subheader('Yield Prediction Results')
-        result_df = pd.concat([id_columns, predictions_df], axis=1)
         st.dataframe(result_df)
         
         # Plot the boxplot

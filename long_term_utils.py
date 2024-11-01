@@ -4,24 +4,84 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 REQUIRED_COLUMNS = [
-    'Подразделение', 'Поле', 'Field_ID', 'Year', 'Area', 'Агрофон',
-    'Культура', 'Previous_Years_Yield', 'Previous_Year_Mean_Region',
-    'Total Fertilizer/ha', 'Macro Total/ha', 'Micro Total/ha',
-    'Fung Total/ha', 'Pest Total/ha', 'bdod', 'cec', 'clay', 'phh2o',
-    'sand', 'silt', 'soc', 'DOY_min', 'DOY_max', 
+'Year', 'Агрофон', 'Культура', 'Macro Total/ha',
+       'Fung Total/ha', 'Pest Total/ha', 'bdod', 'phh2o', 'sand', 'silt',
+       'soc', 'DOY_min', '5_relative_humidity', '6_relative_humidity',
+       '7_relative_humidity', '8_relative_humidity',
+       '5_surface_solar_radiation_downwards_sum',
+       '6_surface_solar_radiation_downwards_sum',
+       '7_surface_solar_radiation_downwards_sum',
+       '8_surface_solar_radiation_downwards_sum', '5_temperature_2m_max',
+       '6_temperature_2m_max', '7_temperature_2m_max', '8_temperature_2m_max',
+       '5_temperature_2m_min', '6_temperature_2m_min', '7_temperature_2m_min',
+       '8_temperature_2m_min', '5_total_precipitation_sum',
+       '6_total_precipitation_sum', '7_total_precipitation_sum',
+       '8_total_precipitation_sum', '5_v_component_of_wind_10m',
+       '6_v_component_of_wind_10m', '7_v_component_of_wind_10m',
+       '8_v_component_of_wind_10m', '5_vapor_pressure_deficit',
+       '6_vapor_pressure_deficit', '7_vapor_pressure_deficit',
+       '8_vapor_pressure_deficit'
 ]
 
 
 COLUMN_DTYPES = {
-    'Year': 'int64', 
-    'Area': 'float64', 
-    'Агрофон': 'object', 'Культура': 'object', 'Previous_Years_Yield': 'float64', 
-    'Previous_Year_Mean_Region': 'float64', 'Total Fertilizer/ha': 'float64', 
-    'Macro Total/ha': 'float64', 'Micro Total/ha': 'float64', 'Fung Total/ha': 'float64', 
-    'Pest Total/ha': 'float64', 'bdod': 'float64', 'cec': 'float64', 'clay': 'float64', 
-    'phh2o': 'float64', 'sand': 'float64', 'silt': 'float64', 'soc': 'float64', 
-    'DOY_min': 'int64', 'DOY_max': 'int64'
+    'Year': 'int64', 'Агрофон': 'object', 'Культура': 'object', 
+    'Macro Total/ha': 'float64', 'Fung Total/ha': 'float64', 'Pest Total/ha': 'float64', 
+    'bdod': 'float64', 'phh2o': 'float64', 'sand': 'float64', 'silt': 'float64', 'soc': 'float64', 
+    'DOY_min': 'int64', '5_relative_humidity': 'float64', '6_relative_humidity': 'float64', 
+    '7_relative_humidity': 'float64', '8_relative_humidity': 'float64', 
+    '5_surface_solar_radiation_downwards_sum': 'float64', '6_surface_solar_radiation_downwards_sum': 'float64',
+    '7_surface_solar_radiation_downwards_sum': 'float64', '8_surface_solar_radiation_downwards_sum': 'float64',
+    '5_temperature_2m_max': 'float64', '6_temperature_2m_max': 'float64', '7_temperature_2m_max': 'float64', 
+    '8_temperature_2m_max': 'float64', '5_temperature_2m_min': 'float64', '6_temperature_2m_min': 'float64', 
+    '7_temperature_2m_min': 'float64', '8_temperature_2m_min': 'float64', 
+    '5_total_precipitation_sum': 'float64', '6_total_precipitation_sum': 'float64', 
+    '7_total_precipitation_sum': 'float64', '8_total_precipitation_sum': 'float64', 
+    '5_v_component_of_wind_10m': 'float64', '6_v_component_of_wind_10m': 'float64', 
+    '7_v_component_of_wind_10m': 'float64', '8_v_component_of_wind_10m': 'float64', 
+    '5_vapor_pressure_deficit': 'float64', '6_vapor_pressure_deficit': 'float64', 
+    '7_vapor_pressure_deficit': 'float64', '8_vapor_pressure_deficit': 'float64'
 }
+
+REQUIRED_COLUMNS_2 = [
+'Year', 'Агрофон', 'Культура', 'Fung Total/ha',
+       'Pest Total/ha', 'bdod', 'cec', 'clay', 'phh2o', 'sand', 'silt', 'soc',
+       '5_relative_humidity', '6_relative_humidity', '7_relative_humidity',
+       '8_relative_humidity', '5_surface_solar_radiation_downwards_sum',
+       '6_surface_solar_radiation_downwards_sum',
+       '7_surface_solar_radiation_downwards_sum',
+       '8_surface_solar_radiation_downwards_sum', '5_temperature_2m_max',
+       '6_temperature_2m_max', '7_temperature_2m_max', '8_temperature_2m_max',
+       '5_temperature_2m_min', '6_temperature_2m_min', '7_temperature_2m_min',
+       '8_temperature_2m_min', '5_total_precipitation_sum',
+       '6_total_precipitation_sum', '7_total_precipitation_sum',
+       '8_total_precipitation_sum', '5_v_component_of_wind_10m',
+       '6_v_component_of_wind_10m', '7_v_component_of_wind_10m',
+       '8_v_component_of_wind_10m', '5_vapor_pressure_deficit',
+       '6_vapor_pressure_deficit', '7_vapor_pressure_deficit',
+       '8_vapor_pressure_deficit'
+]
+
+COLUMN_DTYPES_2 = {
+    'Year': 'int64', 'Агрофон': 'object', 'Культура': 'object', 
+     'Fung Total/ha': 'float64', 'Pest Total/ha': 'float64', 
+    'bdod': 'float64','cec': 'float64', 'clay': 'float64', 'phh2o': 'float64', 'sand': 'float64', 'silt': 'float64', 'soc': 'float64', 
+     '5_relative_humidity': 'float64', '6_relative_humidity': 'float64', 
+    '7_relative_humidity': 'float64', '8_relative_humidity': 'float64', 
+    '5_surface_solar_radiation_downwards_sum': 'float64', '6_surface_solar_radiation_downwards_sum': 'float64',
+    '7_surface_solar_radiation_downwards_sum': 'float64', '8_surface_solar_radiation_downwards_sum': 'float64',
+    '5_temperature_2m_max': 'float64', '6_temperature_2m_max': 'float64', '7_temperature_2m_max': 'float64', 
+    '8_temperature_2m_max': 'float64', '5_temperature_2m_min': 'float64', '6_temperature_2m_min': 'float64', 
+    '7_temperature_2m_min': 'float64', '8_temperature_2m_min': 'float64', 
+    '5_total_precipitation_sum': 'float64', '6_total_precipitation_sum': 'float64', 
+    '7_total_precipitation_sum': 'float64', '8_total_precipitation_sum': 'float64', 
+    '5_v_component_of_wind_10m': 'float64', '6_v_component_of_wind_10m': 'float64', 
+    '7_v_component_of_wind_10m': 'float64', '8_v_component_of_wind_10m': 'float64', 
+    '5_vapor_pressure_deficit': 'float64', '6_vapor_pressure_deficit': 'float64', 
+    '7_vapor_pressure_deficit': 'float64', '8_vapor_pressure_deficit': 'float64'
+}
+
+
 
 required_cols = REQUIRED_COLUMNS.copy()
 def setup_preprocessor(pre_process_df):
@@ -58,7 +118,7 @@ def check_csv_format(file):
     
     return True, df
 
-def process_data(df):
+def process_data_wheat(df):
     # Store IDs before processing
     id_columns = df[['Подразделение', 'Поле','Field_ID']].copy()
     
@@ -68,6 +128,21 @@ def process_data(df):
     
     # Enforce data types
     for col, dtype in COLUMN_DTYPES.items():
+        if col in process_df.columns:
+            process_df[col] = process_df[col].astype(dtype)
+    
+    return id_columns, process_df
+
+def process_data_other(df):
+    # Store IDs before processing
+    id_columns = df[['Подразделение', 'Поле','Field_ID']].copy()
+    
+    # Drop ID columns and reorder remaining columns
+    process_cols = [col for col in REQUIRED_COLUMNS_2 if col not in ['Подразделение', 'Поле','Field_ID']]
+    process_df = df[process_cols].copy()
+    
+    # Enforce data types
+    for col, dtype in COLUMN_DTYPES_2.items():
         if col in process_df.columns:
             process_df[col] = process_df[col].astype(dtype)
     
@@ -151,3 +226,162 @@ def rename_product_groups(df):
     mapped_df['Культура'] = mapped_df['Культура'].apply(map_product_name)
     
     return mapped_df
+
+    def map_crop_name(df):
+    mapped_df = df.copy()
+    def map_product_name(product_name):
+        product_name = product_name.lower()  # Convert to lower case
+
+        if product_name.startswith("лен"):
+            return "Flakes"
+        elif product_name.startswith("пшеница твердая"):
+            return "Hard Wheat"
+        elif product_name.startswith("подсолнечник"):
+            return "Sunflower"
+        return 'others' 
+    
+    mapped_df['Культура'] = mapped_df['Культура'].apply(map_product_name)
+    
+    return mapped_df
+
+
+    def predict_yields(df, model_type, prep_path):
+    """
+    Main prediction function that handles data processing and yield predictions
+    Args:
+        df (pd.DataFrame): Input DataFrame with required features
+        model_type (str): Either 'wheat' or 'other_crops'
+    Returns:
+        tuple: (result_df, error_message)
+    """
+    try:
+        # Process input data
+        id_columns, no_outlier_df = process_data_wheat(df)
+        
+        # Load climate data
+        aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
+        climate_columns = [col for col in aggregated_df.columns if col != 'climate_quantile']
+        
+        # Load and prep model
+        model = load_model(model_type)
+        if model is None:
+            return None, "Failed to load model"
+            
+        # Process climate scenarios
+        dfs = []
+        for _, climate_row in aggregated_df.iterrows():
+            temp_df = no_outlier_df.copy()
+            temp_df[climate_columns] = climate_row[climate_columns].values
+            dfs.append(temp_df)
+        
+        # Load and setup preprocessor
+        prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
+        prep_df = map_agrofon_to_group(prep_df)
+        prep_df = rename_product_groups(prep_df)
+        preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
+        feature_names = (numeric_features + 
+                        preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
+        
+        # Generate predictions
+        y_pred_list = []
+        for df in dfs:
+            pre_process_df = map_agrofon_to_group(df)
+            pre_process_df = rename_product_groups(pre_process_df)
+            processed_data = preprocessor.transform(pre_process_df)
+            processed_df = pd.DataFrame(processed_data, columns=feature_names)
+            processed_df = processed_df.drop(columns='Культура_others')
+            y_pred = model.predict(processed_df)
+            y_pred_list.append(y_pred)
+        
+        # Create results DataFrame
+        predictions_df = pd.DataFrame({
+            'Scenario Bad': y_pred_list[0],
+            'Scenario Good': y_pred_list[1],
+            'Scenario Moderate Good': y_pred_list[3],
+            'Scenario Moderate Bad': y_pred_list[2]
+        })
+        
+        # Calculate expected yield
+        predictions_df['Expected Yield'] = (
+            predictions_df['Scenario Bad'] * 0.2 +
+            predictions_df['Scenario Good'] * 0.2 +
+            predictions_df['Scenario Moderate Good'] * 0.3 +
+            predictions_df['Scenario Moderate Bad'] * 0.3
+        )
+        
+        # Combine results
+        result_df = pd.concat([id_columns, predictions_df], axis=1)
+        return result_df, None
+        
+    except Exception as e:
+        return None, f"Error in prediction pipeline: {str(e)}"
+
+    def predict_yields_others(df, model_type, prep_path):
+    """
+    Main prediction function that handles data processing and yield predictions
+    Args:
+        df (pd.DataFrame): Input DataFrame with required features
+        model_type (str): Either 'wheat' or 'other_crops'
+    Returns:
+        tuple: (result_df, error_message)
+    """
+    try:
+        # Process input data
+        id_columns, no_outlier_df = process_data_others(df)
+        
+        # Load climate data
+        aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
+        climate_columns = [col for col in aggregated_df.columns if col != 'climate_quantile']
+        
+        # Load and prep model
+        model = load_model(model_type)
+        if model is None:
+            return None, "Failed to load model"
+            
+        # Process climate scenarios
+        dfs = []
+        for _, climate_row in aggregated_df.iterrows():
+            temp_df = no_outlier_df.copy()
+            temp_df[climate_columns] = climate_row[climate_columns].values
+            dfs.append(temp_df)
+        
+        # Load and setup preprocessor
+        prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
+        prep_df = map_agrofon_to_group(prep_df)
+        prep_df = rename_product_groups(prep_df)
+        preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
+        feature_names = (numeric_features + 
+                        preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
+        
+        # Generate predictions
+        y_pred_list = []
+        for df in dfs:
+            pre_process_df = map_agrofon_to_group(df)
+            pre_process_df = map_crop_name(pre_process_df)
+            processed_data = preprocessor.transform(pre_process_df)
+            processed_df = pd.DataFrame(processed_data, columns=feature_names)
+            y_pred = model.predict(processed_df)
+            y_pred_list.append(y_pred)
+        
+        # Create results DataFrame
+        predictions_df = pd.DataFrame({
+            'Scenario Bad': y_pred_list[0],
+            'Scenario Good': y_pred_list[1],
+            'Scenario Moderate Good': y_pred_list[3],
+            'Scenario Moderate Bad': y_pred_list[2]
+        })
+        
+        # Calculate expected yield
+        predictions_df['Expected Yield'] = (
+            predictions_df['Scenario Bad'] * 0.2 +
+            predictions_df['Scenario Good'] * 0.2 +
+            predictions_df['Scenario Moderate Good'] * 0.3 +
+            predictions_df['Scenario Moderate Bad'] * 0.3
+        )
+        
+        # Combine results
+        result_df = pd.concat([id_columns, predictions_df], axis=1)
+        return result_df, None
+        
+    except Exception as e:
+        return None, f"Error in prediction pipeline: {str(e)}"
