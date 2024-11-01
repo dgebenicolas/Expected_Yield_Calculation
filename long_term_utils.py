@@ -165,20 +165,20 @@ def map_agrofon_to_group(df):
     reflect the mapped product groups.
     """
     mapped_df = df.copy()
-    def map_product_name(product_name):
-        product_name = product_name.lower()  # Convert to lower case
+def map_product_name(product_name):
+    product_name = product_name.lower()  # Convert to lower case
 
-        if "стерня" in product_name:
-            return "Stubble"
-        elif "пар" in product_name:
-            return "Fallow"
-        elif "глубокая" in product_name or "глубокое" in product_name:
-            return "Deep Tillage"
-        return 'others' 
-    
-    mapped_df['Агрофон'] = mapped_df['Агрофон'].apply(map_product_name)
-    
-    return mapped_df
+    if "стерня" in product_name:
+        return "Stubble"
+    elif "пар" in product_name:
+        return "Fallow"
+    elif "глубокая" in product_name or "глубокое" in product_name:
+        return "Deep Tillage"
+    return 'others' 
+
+mapped_df['Агрофон'] = mapped_df['Агрофон'].apply(map_product_name)
+
+return mapped_df
 
 def rename_product_groups(df):
     """
