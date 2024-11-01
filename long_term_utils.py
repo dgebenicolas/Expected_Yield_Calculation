@@ -8,7 +8,7 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-REQUIRED_COLUMNS = [
+REQUIRED_COLUMNS = ['Подразделение', 'Поле', 'Field_ID',
 'Year', 'Агрофон', 'Культура', 'Macro Total/ha',
        'Fung Total/ha', 'Pest Total/ha', 'bdod', 'phh2o', 'sand', 'silt',
        'soc', 'DOY_min'
@@ -22,7 +22,7 @@ COLUMN_DTYPES = {
     'DOY_min': 'int64'
 }
 
-REQUIRED_COLUMNS_2 = [
+REQUIRED_COLUMNS_2 = ['Подразделение', 'Поле', 'Field_ID',
 'Year', 'Агрофон', 'Культура', 'Fung Total/ha',
        'Pest Total/ha', 'bdod', 'cec', 'clay', 'phh2o', 'sand', 'silt', 'soc',
 
