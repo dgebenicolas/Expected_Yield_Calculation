@@ -90,11 +90,11 @@ def main():
         # Plot the boxplot
         st.subheader('Distribution of Yield Predictions Across Scenarios')
         fig, ax = plt.subplots(figsize=(12, 6))
-        sns.boxplot(data=predictions_df[['Scenario Bad', 'Scenario Good', 'Scenario Moderate Good', 'Scenario Moderate Bad']], ax=ax)
+        sns.boxplot(data=result_df[['Scenario Bad', 'Scenario Good', 'Scenario Moderate Good', 'Scenario Moderate Bad']], ax=ax)
 
         # Add mean values on top of each box
         for i, col in enumerate(['Scenario Bad', 'Scenario Good', 'Scenario Moderate Good', 'Scenario Moderate Bad']):
-            mean_val = predictions_df[col].mean()
+            mean_val = result_df[col].mean()
             ax.text(i, mean_val, f'{mean_val:.1f}', ha='center', va='bottom')
 
         plt.xticks(rotation=45)
