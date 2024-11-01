@@ -107,7 +107,7 @@ def main():
         st.pyplot(fig)
 
         # Choropleth Map
-        st.subheader("Predicted Yield Map")        
+        st.subheader("Expected Yield Map")        
         try:
 
             geojson_filepath = os.path.join(current_dir,f'All Fields Polygons.geojson')
@@ -127,27 +127,27 @@ def main():
 
             # Filter the data
             map_data = result_df[result_df['Подразделение'].isin(selected_divisions)].copy()
-            map_data = map_data[['Подразделение', 'Field_ID', 'Predicted_Yield']]
+            map_data = map_data[['Подразделение', 'Field_ID', 'Expected Yield']]
             
             fig_map = px.choropleth_mapbox(
                 map_data, 
                 geojson=geojson_data, 
                 locations='Field_ID',
                 featureidkey="properties.Field_ID",
-                color='Predicted_Yield',
+                color='Expected Yield',
                 color_continuous_scale="RdYlGn",
-                range_color=(map_data['Predicted_Yield'].min(), map_data['Predicted_Yield'].max()),
+                range_color=(map_data['Expected Yield'].min(), map_data['Expected Yield'].max()),
                 mapbox_style="carto-positron",
                 zoom=8,
                 center={"lat": 53.95, "lon": 63.48},
                 opacity=0.7,
-                labels={'Predicted_Yield': 'Predicted Yield'}
+                labels={'Expected Yield': 'Expected Yield'}
             )
             
             fig_map.update_layout(
                 margin={"r":0,"t":30,"l":0,"b":0},
                 height=600,
-                title=dict(text='Predicted Yield by Field', x=0.5)
+                title=dict(text='Expected Yield by Field', x=0.5)
             )
             
             st.plotly_chart(fig_map, use_container_width=True)
