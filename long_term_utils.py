@@ -3,6 +3,31 @@ import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
+# Add the current_dir variable
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Add the load_model function
+def load_model(model_type):
+    """
+    Load model based on user selection
+    Args:
+        model_type (str): Either 'wheat' or 'other_crops'
+    Returns:
+        object: Loaded model or None if error
+    """
+    model_paths = {
+        'wheat': 'wheat_lgbm.txt',
+        'other_crops': 'other_crops_lgbm.txt'
+    }
+    
+    try:
+        model_path = os.path.join(current_dir, model_paths[model_type])
+        model = lgb.Booster(model_file=model_path)
+        return model
+    except Exception as e:
+        st.error(f"Error loading {model_type} model: {str(e)}")
+        return None
+
 REQUIRED_COLUMNS = [
 'Year', 'Агрофон', 'Культура', 'Macro Total/ha',
        'Fung Total/ha', 'Pest Total/ha', 'bdod', 'phh2o', 'sand', 'silt',
@@ -385,3 +410,20 @@ def predict_yields_others(df, model_type, prep_path):
         
     except Exception as e:
         return None, f"Error in prediction pipeline: {str(e)}"
+
+__all__ = [
+    'setup_preprocessor',
+    'check_csv_format',
+    'process_data_wheat',
+    'map_agrofon_to_group',
+    'REQUIRED_COLUMNS',
+    'COLUMN_DTYPES',
+    'REQUIRED_COLUMNS_2',
+    'COLUMN_DTYPES_2',
+    'rename_product_groups',
+    'process_data_other',
+    'map_crop_name',
+    'predict_yields',
+    'predict_yields_others',
+    'load_model'  # Add this line
+]

@@ -11,6 +11,7 @@ from long_term_utils import (
     setup_preprocessor, check_csv_format, process_data_wheat, 
     map_agrofon_to_group, REQUIRED_COLUMNS, COLUMN_DTYPES, REQUIRED_COLUMNS_2, COLUMN_DTYPES_2, rename_product_groups,
     process_data_other, map_crop_name, predict_yields, predict_yields_others
+    
 )
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
