@@ -276,7 +276,7 @@ def predict_yields_others(df, model, prep_path):
     """
     try:
         # Process input data
-        id_columns, no_outlier_df = process_data_others(df)
+        id_columns, no_outlier_df = process_data_other(df)
         
         # Load climate data
         aggregated_df = pd.read_csv(os.path.join(current_dir, 'aggregated_df.csv'))
