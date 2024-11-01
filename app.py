@@ -90,21 +90,38 @@ def main():
         # Display the results
         st.subheader('Yield Prediction Results')
         st.dataframe(result_df)
+
+        st.subheader('Yield Prediction By Farm')
+        farm_results = result_df.groupby('Подразделение').agg({
+            'Scenario Bad': 'mean',
+            'Scenario Good': 'mean', 
+            'Scenario Moderate Good': 'mean',
+            'Scenario Moderate Bad': 'mean',
+            'Expectedd Yield': 'mean'
+        }).reset_index()
+        st.dataframe(farm_results)
+
+        st.subheader('Summary Statistics')
+        summary_results = result_df[['Scenario Bad', 'Scenario Good', 'Scenario Moderate Good', 'Scenario Moderate Bad', 'Expected Yield']].mean().to_frame().T
+        st.dataframe(summary_results)
+
         
         # Plot the boxplot
         st.subheader('Distribution of Yield Predictions Across Scenarios')
-        fig, ax = plt.subplots(figsize=(12, 6))
-        sns.boxplot(data=result_df[['Scenario Bad', 'Scenario Good', 'Scenario Moderate Good', 'Scenario Moderate Bad']], ax=ax)
+        plt.figure(figsize=(12, 6))
+        sns.violinplot(data=result_df[['Scenario Bad', 'Scenario Good', 'Scenario Moderate Good', 'Scenario Moderate Bad']], 
+                    inner='box',
+                    alpha=0.7,
+                    inner_kws={'color': 'white'})
 
-        # Add mean values on top of each box
         for i, col in enumerate(['Scenario Bad', 'Scenario Good', 'Scenario Moderate Good', 'Scenario Moderate Bad']):
             mean_val = result_df[col].mean()
-            ax.text(i, mean_val, f'{mean_val:.1f}', ha='center', va='bottom')
-
+            plt.text(i, mean_val, f'{mean_val:.1f}', ha='center', va='bottom', fontsize=12)
         plt.xticks(rotation=45)
         plt.title('Distribution of Yield Predictions Across Scenarios')
         plt.ylabel('Predicted Yield')
-        st.pyplot(fig)
+        plt.show()
+        st.pyplot(plt)
 
         # Choropleth Map
         st.subheader("Expected Yield Map")        
