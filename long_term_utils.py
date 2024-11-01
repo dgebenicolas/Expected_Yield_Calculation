@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+import os
 
 # Add the current_dir variable
 current_dir = os.path.dirname(os.path.abspath(__file__))
