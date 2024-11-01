@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import plotly.graph_objects as go
+import json
 from long_term_utils import (
     setup_preprocessor, check_csv_format, process_data_wheat, 
     map_agrofon_to_group, REQUIRED_COLUMNS, COLUMN_DTYPES, REQUIRED_COLUMNS_2, COLUMN_DTYPES_2, rename_product_groups,
@@ -104,6 +105,56 @@ def main():
         plt.title('Distribution of Yield Predictions Across Scenarios')
         plt.ylabel('Predicted Yield')
         st.pyplot(fig)
+
+        # Choropleth Map
+        st.subheader("Predicted Yield Map")        
+        try:
+
+            geojson_filepath = os.path.join(current_dir,f'All Fields Polygons.geojson')
+            
+            if not os.path.exists(geojson_filepath):
+                st.error("Field boundaries data file not found.")
+                return
+                
+            with open(geojson_filepath, 'r') as f:
+                geojson_data = json.load(f)
+                
+            selected_divisions = st.multiselect(
+                "Filter by Подразделение:",
+                options=sorted(result_df['Подразделение'].unique()),
+                default=sorted(result_df['Подразделение'].unique())
+            )
+
+            # Filter the data
+            map_data = result_df[result_df['Подразделение'].isin(selected_divisions)].copy()
+            map_data = map_data[['Подразделение', 'Field_ID', 'Predicted_Yield']]
+            
+            fig_map = px.choropleth_mapbox(
+                map_data, 
+                geojson=geojson_data, 
+                locations='Field_ID',
+                featureidkey="properties.Field_ID",
+                color='Predicted_Yield',
+                color_continuous_scale="RdYlGn",
+                range_color=(map_data['Predicted_Yield'].min(), map_data['Predicted_Yield'].max()),
+                mapbox_style="carto-positron",
+                zoom=8,
+                center={"lat": 53.95, "lon": 63.48},
+                opacity=0.7,
+                labels={'Predicted_Yield': 'Predicted Yield'}
+            )
+            
+            fig_map.update_layout(
+                margin={"r":0,"t":30,"l":0,"b":0},
+                height=600,
+                title=dict(text='Predicted Yield by Field', x=0.5)
+            )
+            
+            st.plotly_chart(fig_map, use_container_width=True)
+            
+        except Exception as e:
+            st.error(f"Error creating map: {str(e)}")
+
 
 if __name__ == "__main__":
     main()
