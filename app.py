@@ -77,8 +77,11 @@ def main():
         # Choose correct prediction function based on model type
         if model_type == 'wheat':
             result_df, error = predict_yields(result, model, prep_path)
-        else:
+        elif model_type == 'other_crops':
             result_df, error = predict_yields_others(result, model, prep_path)
+        else:
+            st.error("Invalid model type selected")
+            return
             
         if error:
             st.error(error)
