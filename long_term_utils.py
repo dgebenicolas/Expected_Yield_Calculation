@@ -77,7 +77,7 @@ def process_data_wheat(df):
 
 def process_data_other(df):
     # Store IDs before processing
-    id_columns = df[['Подразделение', 'Поле','Field_ID']].copy()
+    id_columns = df[['Подразделение', 'Поле','Field_ID', 'Культура']].copy()
     
     # Drop ID columns and reorder remaining columns
     process_cols = [col for col in REQUIRED_COLUMNS_2 if col not in ['Подразделение', 'Поле','Field_ID']]
