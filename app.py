@@ -78,10 +78,10 @@ def main():
         # Choose correct prediction function based on model type
         if model_type == 'wheat':
             id_columns, no_outlier_df = process_data_wheat(result)
-            result_df, error = predict_yields(id_columns, no_outlier_df, model, prep_path)
+            result_df, error = predict_yields(id_columns, no_outlier_df, model, prep_path, model_type)
         elif model_type == 'other_crops':
             id_columns, no_outlier_df = process_data_other(result)
-            result_df, error = predict_yields(id_columns, no_outlier_df, model, prep_path)
+            result_df, error = predict_yields(id_columns, no_outlier_df, model, prep_path, model_type)
         else:
             st.error("Invalid model type selected")
             return

@@ -187,7 +187,7 @@ def map_crop_name(df):
     return mapped_df
 
 
-def predict_yields(id_columns, no_outlier_df, model, prep_path):
+def predict_yields(id_columns, no_outlier_df, model, prep_path, model_type):
     """
     Main prediction function that handles data processing and yield predictions
     Args:
@@ -221,7 +221,10 @@ def predict_yields(id_columns, no_outlier_df, model, prep_path):
         y_pred_list = []
         for df in dfs:
             pre_process_df = map_agrofon_to_group(df)
-            pre_process_df = rename_product_groups(pre_process_df)
+            if model_type == 'wheat':
+                pre_process_df = rename_product_groups(pre_process_df)
+            elif  model_type == 'other_crops':
+                pre_process_df = map_crop_name(pre_process_df)
             processed_data = preprocessor.transform(pre_process_df)
             processed_df = pd.DataFrame(processed_data, columns=feature_names)
             if 'Культура_others' in processed_df.columns:
