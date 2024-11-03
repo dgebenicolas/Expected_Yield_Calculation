@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 import json
 import importlib
 import long_term_utils
-from long_term_utils import (
+from long_term_utils import (process_data_wheat, process_data_other,
     check_csv_format, predict_yields, predict_yields_others
 )
 importlib.reload(long_term_utils)
@@ -77,9 +77,11 @@ def main():
         
         # Choose correct prediction function based on model type
         if model_type == 'wheat':
-            result_df, error = predict_yields(result, model, prep_path)
+            id_columns, no_outlier_df = process_data_wheat(result)
+            result_df, error = predict_yields(id_columns, no_outlier_df, model, prep_path)
         elif model_type == 'other_crops':
-            result_df, error = predict_yields_others(result, model, prep_path)
+            id_columns, no_outlier_df = process_data_other(result)
+            result_df, error = predict_yields(id_columns, no_outlier_df, model, prep_path)
         else:
             st.error("Invalid model type selected")
             return
