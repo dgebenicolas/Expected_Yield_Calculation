@@ -181,9 +181,6 @@ def main():
         
         def display_basic_stats(result_df: pd.DataFrame, by_crop: bool = False):
             """Display basic statistics for yield predictions"""
-            st.subheader('Yield Prediction Results')
-            st.dataframe(result_df)
-
             groupby_cols = ['Подразделение']
             if by_crop:
                 groupby_cols.append('Культура')
