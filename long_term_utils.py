@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 import os
+import streamlit as st
 
 # Add the current_dir variable
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -229,6 +230,7 @@ def predict_yields(id_columns, no_outlier_df, model, prep_path, model_type):
             processed_df = pd.DataFrame(processed_data, columns=feature_names)
             if 'Культура_others' in processed_df.columns:
                 processed_df = processed_df.drop(columns='Культура_others')
+            st.write(processed_df.columns)
             y_pred = model.predict(processed_df)
             y_pred_list.append(y_pred)
         
