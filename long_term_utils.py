@@ -213,7 +213,10 @@ def predict_yields(id_columns, no_outlier_df, model, prep_path, model_type):
         # Load and setup preprocessor
         prep_df = pd.read_csv(os.path.join(current_dir, prep_path))
         prep_df = map_agrofon_to_group(prep_df)
-        prep_df = rename_product_groups(prep_df)
+        if model_type == 'wheat':
+            prep_df = rename_product_groups(prep_df)
+        elif model_type == 'other_crops':
+            prep_df = map_crop_name(prep_df)
         preprocessor, numeric_features, categorical_features = setup_preprocessor(prep_df)
         feature_names = (numeric_features + 
                         preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist())
@@ -224,7 +227,7 @@ def predict_yields(id_columns, no_outlier_df, model, prep_path, model_type):
             pre_process_df = map_agrofon_to_group(df)
             if model_type == 'wheat':
                 pre_process_df = rename_product_groups(pre_process_df)
-            elif  model_type == 'other_crops':
+            elif model_type == 'other_crops':
                 pre_process_df = map_crop_name(pre_process_df)
             processed_data = preprocessor.transform(pre_process_df)
             processed_df = pd.DataFrame(processed_data, columns=feature_names)
