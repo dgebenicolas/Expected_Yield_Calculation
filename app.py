@@ -173,6 +173,11 @@ def main():
             
         # except Exception as e:
         #     st.error(f"Error creating map: {str(e)}")
+        st.subheader('Yield Prediction Results')
+        st.dataframe(result_df)
+        by_crop = model_type == 'other_crops'
+        if by_crop:
+            result_df = map_crop_name(result_df)
         
         def display_basic_stats(result_df: pd.DataFrame, by_crop: bool = False):
             """Display basic statistics for yield predictions"""
@@ -182,7 +187,6 @@ def main():
             groupby_cols = ['Подразделение']
             if by_crop:
                 groupby_cols.append('Культура')
-                result_df = map_crop_name(result_df)
 
             st.subheader('Yield Prediction By Farm' + (' and Crop' if by_crop else ''))
             farm_results = result_df.groupby(groupby_cols).agg({
@@ -328,9 +332,7 @@ def main():
                 st.error(f"Error creating map: {str(e)}")
 
         def display_results(result_df: pd.DataFrame, model_type: str):
-            """Main function to display all results"""
-            by_crop = model_type == 'other_crops'
-            
+            """Main function to display all results"""            
             display_basic_stats(result_df, by_crop)
             plot_yield_distribution(result_df, by_crop)
             
