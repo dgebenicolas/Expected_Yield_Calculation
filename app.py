@@ -11,7 +11,7 @@ import json
 import importlib
 import long_term_utils
 from long_term_utils import (process_data_wheat, process_data_other,
-    check_csv_format, predict_yields, predict_yields_others
+    check_csv_format, predict_yields
 )
 importlib.reload(long_term_utils)
 current_dir = os.path.dirname(os.path.abspath(__file__))
